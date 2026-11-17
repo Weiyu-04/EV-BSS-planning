@@ -1,0 +1,175 @@
+
+energy:
+  depth_of_discharge: 0.8        # zeta ; provenance: paper (Table 1/2)
+  utilisation_efficiency: 0.9    # eta  ; provenance: paper (Table 1/2)
+
+  hp_to_kw: 0.735                # provenance: verified
+
+admiralty:
+  apply_correction: true
+  calibrated_c_kw: 366.0
+  sensitivity_c_kw: [356.2, 366.0, 387.0]
+  code_convention_factor: 1.36054
+  cb_code_implied: 0.700
+  cb_reference_range: [0.793, 0.843]
+  apply_cb_correction: false
+
+cost:
+  swapping_price: 1.0            # CNY/kWh ; provenance: paper (Table G2)
+  charging_price: 0.5            # CNY/kWh ; provenance: paper (Table G2)
+
+  swapping_price_sweep:
+    low: 0.5
+    high: 2.0
+    step: 0.1
+
+  diesel_price_per_litre: 8.0    # CNY/L  ; provenance: assumed (stated); swept in the sensitivity analysis
+  diesel_lhv_kwh_per_litre: 10.0 # kWh/L  ; provenance: assumed (stated); swept in the sensitivity analysis
+  # dimensionless ; symbol eta_fuel in Eq (30) ; provenance: assumed (stated); swept in the sensitivity analysis
+  diesel_combustion_efficiency: 0.4
+  diesel_electric_to_mechanical_efficiency: 0.8
+  # dimensionless ; symbol eta_trans ; provenance: assumed (stated); swept in the sensitivity analysis
+  diesel_transmission_efficiency: 0.95
+
+  nautical_mile_to_km: 1.852
+
+inventory:
+  charging_ratio: 0.8
+  charging_days: 1
+
+  transfer_km_per_day: 400
+
+  transfer_trucks_per_day: [0, 5, 10, 20, 40, 60, 80, 120, 200, 400]
+
+  transfer_days: 1
+
+  self_balance_band_over_i0_max: 1.0
+  self_balance_drift_over_i0_max: 0.10
+  self_balance_sweep: [0.5, 0.75, 1.0, 1.25]
+  balance_judging_scales_days: [1, 3, 5]
+  battery_unit_capacity_kwh: 1600
+  battery_unit_mass_t: 25
+
+  das_search_hp_factor_published: 1.0    # provenance: verified (reproduces 48/48)
+  das_search_hp_factor_correct: 0.735    # provenance: paper (Admiralty in kW)
+
+lcc:
+  battery_cny_per_kwh: 1400        # grade A/B  Jiangsu Port Group 120TEU containerised
+  battery_cny_per_kwh_low: 950     # grade A    Jiangsu MSA 2026 award, 1964 kWh = 1.86M
+  battery_cny_per_kwh_high: 2000
+  battery_calendar_life_yr: 10     # grade B    EVE, LF280K, named vessels
+  battery_cycle_life: 8000
+  battery_cycle_life_low: 6000
+
+  station_cny_per_kw: 5312.5
+  station_cny_per_kw_low: 2000     # grade A    Jiangsu MSA 2026, 3 x 400 kW, 2.4M
+  station_cny_per_kw_high: 6050    # grade A    Yangtze MSA 2026, 1600 kW, 9.68M
+  station_power_kw: 3000           # grade B    700TEU study: 3 MW/station
+  swap_equipment_cny: 3_000_000
+  swap_equipment_cny_crane: 7_500_000  # grade B  conventional 60 t crane, 7-8M
+  om_rate_per_yr: 0.02
+  station_life_yr: 12.5            # grade C    same source; sensitivity below
+  station_life_sweep: [10.0, 12.5, 15.0]
+
+  electricity_cny_per_kwh: 0.8
+
+  energy_transfer_efficiency: 0.90        # provenance: assumed (stated)
+  energy_transfer_efficiency_sweep: [0.80, 0.90, 0.95]
+
+  transfer_cny_per_pack_km: 6.0    # provenance: assumed (stated)
+  transfer_cny_per_pack_km_sweep: [3.0, 6.0, 10.0]
+
+  discount_rate: 0.05              # provenance: assumed (stated); swept below
+  discount_rate_sweep: [0.0, 0.05, 0.08]
+
+charging:
+  ship_charge_power_kw: 800
+  absorb_into_berthing: true
+  power_sweep_kw: [400, 800, 1200]
+
+queueing:
+  per_pack_hours: 0.0833333333
+  fixed_hours: 0.9166666667
+  median_packs_full_swap: 13
+  paper_swap_hours: 2.0
+  berth_sweep: [1, 2, 3, 4, 5, 6]
+  service_level_wait_h: 1.0
+
+robustness:
+  seed: 20260813
+  n_draws: 1000                  # provenance: assumed (stated)
+
+  sigma_current_fleet: 0.20
+  sigma_current_leg: 0.15
+  sigma_speed_leg: 0.05
+  sigma_aux_fleet: 0.10
+
+  sigma_sweep: [0.5, 1.0, 1.5]
+
+  n_draws_inventory: 200
+
+preprocess:
+  speed_gate: {column: speed_1, lo: 0.0, hi: 0.3}
+  stdbscan: {eps_spatial_m: 300, eps_temporal_min: 60, min_pts: 8}
+  merge_same_berth_m: 500
+  min_dwell_h: 1.0
+  round_decimals: 3
+
+  geofence_tol_deg: 0.05
+  geofence_primary: centroid_0p05
+
+berthing:
+  moving_kn: 0.5
+  min_points: 2
+  zone_deg: 0.10
+  gap_max_h: 6.0
+  status_share: 0.5
+  wait_cap_h: 48.0
+  min_berth_h: 1.0
+
+case:
+  n_ships: 172
+  n_ports: 19
+  n_segments: 4360
+  station_counts: [4, 5, 6, 7, 8, 9]
+  growth_rates: [0, 50, 100]
+  growth_sweep: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50,
+                 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
+  ais_window: ["2024-09-01", "2024-11-29"]
+
+  corridor_km: 773.0
+
+  distance_bands_nm: [60, 130]
+
+  plan2_stations_8:
+    - Nanjing Longtan
+    - Yangshan
+    - Taicang
+    - Changshu Xinghua
+    - Yangzhou
+    - Zhangjiagang
+    - Wuhu
+    - Jiangyin
+
+flow_field:
+  v_avg_anchor_knots: 2.091      # provenance: cited - Datong gauge, see below
+  v_avg_anchor_chainage_km: 62.4
+  datong_flood_season_mps: 1.24
+  datong_dry_season_mps: 0.73
+  flood_months: [5, 6, 7, 8, 9, 10]
+  ais_window_flood_days: 61
+  ais_window_dry_days: 29
+
+  alpha: 1.5                     # provenance: analytic, from the paper's own definition
+
+  bend_factor_b: 0.3             # provenance: assumed (stated); the sweep shows the result does not depend on it
+  bend_factor_sweep: [0.0, 0.1, 0.3]
+
+  width_source: ais_p1_p99_navigable_band   # provenance: derived (this study's AIS)
+  width_median_m: 2570                      # provenance: derived summary, not an input
+
+  centreline_resample_m: 500
+  centreline_smooth_window: 9
+
+  ais_shape_only: true
+  jiangyin_tidal_limit_km: 452.4

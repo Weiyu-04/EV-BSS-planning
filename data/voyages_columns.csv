@@ -1,0 +1,14 @@
+column,description,unit,dtype
+vessel_id,"stable pseudonym, salted hash of the vessel identifier",-,str
+leg_seq,leg order within the vessel's 90 day record,-,int64
+origin_port,port of departure,-,str
+destination_port,port of arrival,-,str
+distance_nm,along channel distance on the shortest path,nautical mile,float64
+departure_utc8,"departure timestamp, China Standard Time",-,datetime64[us]
+arrival_utc8,"arrival timestamp, China Standard Time",-,datetime64[us]
+sailing_hours,time under way as recorded,hour,float64
+design_speed_kn,75th percentile of observed speed over ground,knot,float64
+current_along_track_kn,"current projected on the track, positive downstream",knot,float64
+teu_capacity,nominal container capacity,TEU,int64
+battery_rated_kwh,"rated battery energy, multiples of 1600 kWh",kWh,int64
+leg_energy_kwh,"leg energy over depth of discharge and utilization factor, compared with rated capacity (Section 3.4.2)",kWh,float64
